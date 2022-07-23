@@ -10,7 +10,7 @@ class _meta:
   - Rotation
   - Stretch
   - Post processing'''
-  _rotation = 0
+  _rotate = 0
   _stretch = None
   _size = None
   _opacity = 100
@@ -22,23 +22,23 @@ class _meta:
   # Rotation Configuration
   # --------------------------------
   def rotate_cw(self):
-    _rotation -= 1
-    if _rotation < 0:
-      _rotation += 4
+    _rotate -= 1
+    if _rotate < 0:
+      _rotate += 4
 
     # TODO rotate stretch
 
   def rotate_ccw(self):
-    _rotation += 1
-    if _rotation >= 4:
-      _rotation -= 4
+    _rotate += 1
+    if _rotate >= 4:
+      _rotate -= 4
 
     # TODO rotate stretch
   
   def rotate_reset(self):
     # TODO reset stretch
 
-    self._rotation = 0
+    self._rotate = 0
 
   # --------------------------------
   # Stretch Configuration
@@ -70,7 +70,7 @@ class _meta:
     return img
 
   def _render_rotation(self, img: np.array) -> np.array:
-    return np.rot90(img, k=self._rotation)
+    return np.rot90(img, k=self._rotate)
   
   def _render_stretch(self, img: np.array) -> np.array:
     if self.stretch is None:
@@ -79,7 +79,6 @@ class _meta:
     w, h = self._size[0], self._size[1]
     return cv2.warpPerspective(img, self.stretch, (w, h))
 
-  # TODO implement
   def _render_post_process(self, img: np.array) -> np.array:
     # TODO Set opacity
     return img
@@ -89,7 +88,7 @@ class _meta:
   # --------------------------------
   def copy(self):
     new = _meta()
-    new._rotation = new._rotation
+    new._rotate = new._rotate
     new._stretch = np.copy(new._stretch)
     new._size = new._size
     new._opacity = new._opacity
@@ -104,17 +103,7 @@ class mimage:
   def __init__(self, img):
     self._source = img
     self._meta = _meta()
-    self.data = img
-
-  def set_opacity(self, opacity: int) -> mimage:
-    self._meta.opacity(opacity)
     self.data = self._meta.render(self._source)
-    return self
-
-  def stretch(self, source, target, size) -> mimage:
-    self._meta.stretch(source, target, size)
-    self.data = self._meta.render(self._source)
-    return self
 
   def rotate_cw(self) -> mimage:
     self._meta.rotate_cw()
@@ -123,6 +112,16 @@ class mimage:
 
   def rotate_ccw(self) -> mimage:
     self._meta.rotate_ccw()
+    self.data = self._meta.render(self._source)
+    return self
+
+  def stretch(self, source, target, size) -> mimage:
+    self._meta.stretch(source, target, size)
+    self.data = self._meta.render(self._source)
+    return self
+
+  def set_opacity(self, opacity: int) -> mimage:
+    self._meta.opacity(opacity)
     self.data = self._meta.render(self._source)
     return self
 
