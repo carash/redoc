@@ -72,6 +72,6 @@ class image_processor:
     return img.rotate_ccw()
 
   def add_watermark(self, img: image.image, watermark: image.image) -> image.image:
-    '''Add a watermark overlay over original image
+    '''Tile a watermark overlay over original image
     '''
     return img
